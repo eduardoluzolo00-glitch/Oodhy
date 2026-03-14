@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oodhy — The Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080808;--surface:#111;--surface2:#1a1a1a;--border:#222;--border2:#2e2e2e;--accent:#d4a843;--accent2:#f0c96a;--accent-dim:rgba(212,168,67,0.1);--text:#ede8df;--text2:#9a9088;--muted:#4a4a4a;--green:#3a9a5c}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;overflow:hidden}
+#app{height:100dvh;display:flex;flex-direction:column}
+header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--bg);z-index:10}
+.logo{display:flex;align-items:center;gap:10px}
+.emblem{width:36px;height:36px;border:1.5px solid var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0}
+.emblem::before{content:'';position:absolute;inset:4px;border:1px solid rgba(212,168,67,0.2);border-radius:50%}
+.emblem span{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:700;color:var(--accent)}
+.logo-name{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:700;letter-spacing:4px}
+.logo-tag{font-size:7px;letter-spacing:3.5px;color:var(--muted);margin-top:2px}
+.header-r{display:flex;align-items:center;gap:7px}
+.badge{display:flex;align-items:center;gap:5px;background:rgba(58,154,92,0.1);border:1px solid rgba(58,154,92,0.25);border-radius:20px;padding:4px 9px;font-size:9px;font-weight:600;color:var(--green);letter-spacing:1.5px}
+.dot{width:5px;height:5px;background:var(--green);border-radius:50%;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.lang-sel{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text2);font-size:11px;font-family:'DM Sans',sans-serif;padding:5px 8px;cursor:pointer;outline:none}
+#newBtn{display:none;background:transparent;border:1px solid var(--border2);border-radius:8px;color:var(--muted);font-size:11px;font-family:'DM Sans',sans-serif;padding:5px 10px;cursor:pointer}
+.dots-wrap{position:relative}
+.dots-btn{width:32px;height:32px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px}
+.dots-btn span{width:3.5px;height:3.5px;background:var(--text2);border-radius:50%;display:block}
+.dots-menu{display:none;position:absolute;right:0;top:40px;background:var(--surface);border:1px solid var(--border2);border-radius:14px;min-width:230px;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,0.7);z-index:100}
+.dots-menu.open{display:block}
+.menu-title{padding:12px 16px 8px;font-size:9px;letter-spacing:2px;color:var(--muted);font-weight:600;border-bottom:1px solid var(--border)}
+.menu-item{display:flex;align-items:center;gap:12px;padding:11px 16px;cursor:pointer}
+.menu-item:hover{background:var(--surface2)}
+.menu-icon{font-size:18px;flex-shrink:0}
+.menu-info{flex:1}
+.menu-name{font-size:13px;color:var(--text);font-weight:500}
+.menu-desc{font-size:11px;color:var(--muted);margin-top:1px}
+.soon-badge{background:rgba(212,168,67,0.12);border:1px solid rgba(212,168,67,0.25);border-radius:6px;padding:2px 7px;font-size:9px;color:var(--accent);font-weight:600;letter-spacing:1px;flex-shrink:0}
+#welcome{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;gap:20px;overflow-y:auto}
+.hero{text-align:center}
+.hero-o{position:relative;display:inline-flex;align-items:center;justify-content:center;width:80px;height:80px}
+.ring1{position:absolute;inset:0;border:1px solid var(--border2);border-radius:50%;animation:spin 18s linear infinite}
+.ring2{position:absolute;inset:8px;border:1px solid rgba(212,168,67,0.18);border-radius:50%;animation:spin 11s linear infinite reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ol{font-family:'Cormorant Garamond',serif;font-size:46px;font-weight:700;position:relative;z-index:1}
+.h-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;line-height:1.2;margin-top:12px}
+.h-title em{color:var(--accent);font-style:italic}
+.h-desc{font-size:13px;color:var(--text2);line-height:1.65;max-width:290px;margin:8px auto 0}
+.sugs{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;max-width:440px}
+.sug{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:13px 12px;cursor:pointer;text-align:left;position:relative;overflow:hidden}
+.sug:hover{border-color:var(--accent)}
+.sug i{font-size:18px;margin-bottom:6px;display:block;font-style:normal}
+.sug p{font-size:12.5px;color:var(--text);line-height:1.4}
+#chat{flex:1;overflow-y:auto;padding:14px 14px 6px;display:none;flex-direction:column;gap:12px;scroll-behavior:smooth}
+.msg{display:flex;gap:9px}
+.msg.user{flex-direction:row-reverse}
+.av{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-family:'Cormorant Garamond',serif;font-weight:700;margin-top:2px}
+.msg.user .av{background:var(--accent);color:#000}
+.msg.ai .av{background:var(--surface2);border:1px solid var(--border2);color:var(--accent)}
+.bub{max-width:80%;padding:13px 16px;border-radius:18px;font-size:15px;line-height:1.75;font-weight:400;font-family:'DM Sans',sans-serif;word-break:break-word}
+.msg.user .bub{background:var(--accent);color:#000;border-bottom-right-radius:4px;font-weight:500}
+.msg.ai .bub{background:var(--surface);border:1px solid var(--border);border-bottom-left-radius:4px;color:var(--text)}
+.bub p{margin-bottom:8px;font-size:15px;line-height:1.75}
+.bub p:last-child{margin-bottom:0}
+.bub strong{font-weight:600;color:var(--accent2)}
+.bub ul,.bub ol{padding-left:20px;margin:6px 0}
+.bub li{margin-bottom:5px;font-size:15px}
+.bub code{background:#1a1a1a;border:1px solid var(--border2);padding:2px 7px;border-radius:5px;font-family:monospace;font-size:13px;color:#7ec8a0}
+.bub pre{background:#0d0d0d;border:1px solid var(--border2);border-radius:10px;padding:14px;overflow-x:auto;margin:10px 0;font-size:13px;color:#7ec8a0;font-family:monospace}
+.tdots{display:flex;gap:5px;align-items:center;padding:5px 2px}
+.tdots span{width:6px;height:6px;background:var(--muted);border-radius:50%;animation:td 1.3s infinite}
+.tdots span:nth-child(2){animation-delay:0.2s}
+.tdots span:nth-child(3){animation-delay:0.4s}
+@keyframes td{0%,100%{transform:translateY(0);opacity:0.3}40%{transform:translateY(-5px);opacity:1}}
+.inp-wrap{padding:8px 12px 14px;flex-shrink:0;background:var(--bg);border-top:1px solid var(--border)}
+.modes{display:flex;gap:6px;margin-bottom:8px}
+.mode-btn{display:flex;align-items:center;gap:5px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:12px;font-family:'DM Sans',sans-serif;color:var(--muted);cursor:pointer;font-weight:500}
+.mode-btn.active{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+.inp-box{display:flex;align-items:flex-end;gap:8px;background:var(--surface);border:1px solid var(--border2);border-radius:18px;padding:9px 9px 9px 16px}
+.inp-box:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(212,168,67,0.08)}
+#inp{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;resize:none;max-height:120px;line-height:1.5;padding:3px 0}
+#inp::placeholder{color:var(--muted)}
+#sendBtn{width:38px;height:38px;background:var(--accent);border:none;border-radius:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+#sendBtn:disabled{background:var(--surface2);cursor:not-allowed}
+#sendBtn svg{width:16px;height:16px;fill:#000}
+.inp-foot{text-align:center;margin-top:7px;font-size:10px;color:var(--muted);letter-spacing:0.5px}
+</style>
+</head>>
+<div id="app">
+<header>
+<div class="logo">
+<div class="emblem"><span>O</span></div>
+<div><div class="logo-name">OODHY</div><div class="logo-tag">THE INTELLIGENCE</div></div>
+</div>
+<div class="header-r">
+<select class="lang-sel" id="langSel" onchange="setLang(this.value)">
+<option value="pt">🇵🇹 PT</option>
+<option value="en">🇬🇧 EN</option>
+<option value="fr">🇫🇷 FR</option>
+<option value="es">🇪🇸 ES</option>
+<option value="ar">🇸🇦 AR</option>
+<option value="zh">🇨🇳 ZH</option>
+<option value="ru">🇷🇺 RU</option>
+</select>
+<div class="badge"><div class="dot"></div>ONLINE</div>
+<button id="newBtn" onclick="newChat()">+ Novo</button>
+<div class="dots-wrap">
+<div class="dots-btn" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+<div class="dots-menu" id="dotsMenu">
+<div class="menu-title">EM BREVE</div>
+<div class="menu-item"><span class="menu-icon">🖼️</span><div class="menu-info"><div class="menu-name">Gerar Imagens</div><div class="menu-desc">Cria imagens com IA</div></div><span class="soon-badge">BREVE</span></div>
+<div class="menu-item"><span class="menu-icon">🎙️</span><div class="menu-info"><div class="menu-name">Voz</div><div class="menu-desc">Fala com a Oodhy</div></div><span class="soon-badge">BREVE</span></div>
+<div class="menu-item"><span class="menu-icon">📄</span><div class="menu-info"><div class="menu-name">Analisar Documentos</div><div class="menu-desc">Envia PDFs e ficheiros</div></div><span class="soon-badge">BREVE</span></div>
+<div class="menu-item"><span class="menu-icon">🌐</span><div class="menu-info"><div class="menu-name">Pesquisa na Web</div><div class="menu-desc">Informação em tempo real</div></div><span class="soon-badge">BREVE</span></div>
+<div class="menu-item"><span class="menu-icon">🎨</span><div class="menu-info"><div class="menu-name">Temas Personalizados</div><div class="menu-desc">Muda o visual da Oodhy</div></div><span class="soon-badge">BREVE</span></div>
+</div>
+</div>
+</div>
+</header>
+<div id="welcome">
+<div class="hero">
+<div class="hero-o"><div class="ring1"></div><div class="ring2"></div><span class="ol">O</span></div>
+<div class="h-title">Bem-vindo à <em>Oodhy</em></div>
+<p class="h-desc">A inteligência mais avançada ao teu alcance. Faz qualquer pergunta — estou aqui para responder.</p>
+</div>
+<div class="sugs">
+<div class="sug" onclick="useSug(this)"><i>💰</i><p>Como o homem mais rico do mundo ganhou o primeiro milhão?</p></div>
+<div class="sug" onclick="useSug(this)"><i>🌍</i><p>Qual é o país mais rico do mundo e porquê?</p></div>
+<div class="sug" onclick="useSug(this)"><i>📈</i><p>Casos reais de pessoas que ficaram ricas com a internet</p></div>
+<div class="sug" onclick="useSug(this)"><i>🎮</i><p>Como criar jogos no Roblox e ganhar dinheiro</p></div>
+</div>
+</div>
+<div id="chat"></div>
+<div class="inp-wrap">
+<div class="modes">
+<button class="mode-btn active" id="modeChat" onclick="setMode('chat')">💬 Chat</button>
+<button class="mode-btn" id="modeImg" onclick="setMode('image')">🖼️ Imagem</button>
+</div>
+<div class="inp-box">
+<textarea id="inp" placeholder="Escreve a tua mensagem…" rows="1" onkeydown="onKey(event)" oninput="resize(this)"></textarea>
+<button id="sendBtn" onclick="send()">
+<svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+</button>
+</div>
+<div class="inp-foot">Oodhy Intelligence · Powered by Groq AI</div>
+</div>
+</div><script>
+const LANG_NAMES={pt:'Português',en:'English',fr:'Français',es:'Español',ar:'العربية',zh:'中文',ru:'Русский'};
+const IMG_MSG='🖼️ Esta funcionalidade ainda não foi actualizada, mas estamos a trabalhar nisso. Em breve poderás gerar imagens directamente aqui!';
+const IMG_KEYS=['gera uma imagem','gerar imagem','cria uma imagem','criar imagem','desenha','generate image','create image'];
+let hist=[],busy=false,mode='chat',lang='pt';
+function getSys(){return `És a Oodhy — The Intelligence. Uma IA extraordinariamente avançada e sofisticada.\nRespondes SEMPRE em ${LANG_NAMES[lang]}, a menos que o utilizador peça outro idioma.\nO teu tom é confiante, directo e inteligente.\nNunca digas que és o LLaMA — és apenas a Oodhy.`;}
+function setLang(v){lang=v;}
+function toggleMenu(){document.getElementById('dotsMenu').classList.toggle('open');}
+document.addEventListener('click',e=>{if(!document.querySelector('.dots-wrap').contains(e.target))document.getElementById('dotsMenu').classList.remove('open');});
+function setMode(m){mode=m;document.getElementById('modeChat').classList.toggle('active',m==='chat');document.getElementById('modeImg').classList.toggle('active',m==='image');document.getElementById('inp').placeholder=m==='image'?'Descreve a imagem que queres criar…':'Escreve a tua mensagem…';}
+const resize=el=>{el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px';};
+const onKey=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}};
+function useSug(el){document.getElementById('inp').value=el.querySelector('p').textContent;send();}
+function showChat(){document.getElementById('welcome').style.display='none';document.getElementById('chat').style.display='flex';document.getElementById('newBtn').style.display='block';}
+function newChat(){hist=[];document.getElementById('chat').innerHTML='';document.getElementById('chat').style.display='none';document.getElementById('welcome').style.display='flex';document.getElementById('newBtn').style.display='none';document.getElementById('inp').value='';setMode('chat');}
+function addMsg(role,html){const c=document.getElementById('chat');const d=document.createElement('div');d.className=`msg ${role}`;d.innerHTML=`<div class="av">${role==='user'?'E':'O'}</div><div class="bub">${html}</div>`;c.appendChild(d);c.scrollTop=c.scrollHeight;}
+function showTyping(){const c=document.getElementById('chat');const d=document.createElement('div');d.className='msg ai';d.id='typ';d.innerHTML=`<div class="av">O</div><div class="bub"><div class="tdots"><span></span><span></span><span></span></div></div>`;c.appendChild(d);c.scrollTop=c.scrollHeight;}
+function fmt(t){let s=t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/```[\w]*\n?([\s\S]*?)```/g,'<pre><code>$1</code></pre>').replace(/`([^`\n]+)`/g,'<code>$1</code>').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*([^*\n]+)\*/g,'<em>$1</em>').replace(/^#{1,3} (.+)$/gm,'<strong>$1</strong>').replace(/^[-•*] (.+)$/gm,'<li>$1</li>');s=s.replace(/(<li>.*<\/li>\n?)+/g,m=>`<ul>${m}</ul>`);return s.split(/\n\n+/).map(p=>{p=p.trim();if(!p)return '';if(p.startsWith('<'))return p;return `<p>${p.replace(/\n/g,'<br>')}</p>`;}).join('');}
+async function send(){if(busy)return;const inp=document.getElementById('inp');const txt=inp.value.trim();if(!txt)return;inp.value='';inp.style.height='auto';if(mode==='image'||IMG_KEYS.some(k=>txt.toLowerCase().includes(k))){showChat();addMsg('user',txt.replace(/</g,'&lt;').replace(/>/g,'&gt;'));addMsg('ai',IMG_MSG);return;}
+showChat();busy=true;document.getElementById('sendBtn').disabled=true;addMsg('user',txt.replace(/</g,'&lt;').replace(/>/g,'&gt;'));hist.push({role:'user',content:txt});showTyping();
+try{const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:hist,system:getSys()})});const d=await r.json();document.getElementById('typ')?.remove();if(d.choices?.[0]?.message?.content){const rep=d.choices[0].message.content;hist.push({role:'assistant',content:rep});addMsg('ai',fmt(rep));}else{addMsg('ai',d.error?.message||'Erro inesperado.');}}catch(e){document.getElementById('typ')?.remove();addMsg('ai','⚠️ Erro de ligação.');}
+busy=false;document.getElementById('sendBtn').disabled=false;inp.focus();}
+</script>
+</body>
+</html>
