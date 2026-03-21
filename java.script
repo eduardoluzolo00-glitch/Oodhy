@@ -1,8 +1,0 @@
-function changeLanguage(lang) {
-  document.getElementById("title").innerText = translations[lang].title;
-  document.getElementById("desc").innerText = translations[lang].desc;
-}
-
-document.getElementById("lang").addEventListener("change", function() {
-  changeLanguage(this.value);
-});
